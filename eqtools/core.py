@@ -19,6 +19,13 @@
 """This module provides the core classes for :py:mod:`eqtools`, including the
 base :py:class:`Equilibrium` class.
 """
+from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import division
+from builtins import str
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import scipy
 import scipy.interpolate
 import scipy.integrate
@@ -36,7 +43,7 @@ class ModuleWarning(Warning):
     pass
 
 try:
-    import trispline
+    from . import trispline
     _has_trispline = True
 except ImportError:
     warnings.warn("trispline module could not be loaded -- tricubic spline "
@@ -44,21 +51,35 @@ except ImportError:
                   ModuleWarning)
     _has_trispline = False
 
-try:
-    import matplotlib.pyplot as plt
-    import matplotlib.widgets as mplw
-    import matplotlib.gridspec as mplgs
-    import matplotlib.patches as mpatches
-    import matplotlib.path as mpath
-    from mpl_toolkits.mplot3d import Axes3D
-    from mpl_toolkits.axes_grid1 import make_axes_locatable
-    from matplotlib.colorbar import ColorbarBase
-    from matplotlib.colors import Normalize
-    from .filewriter import gfile
-except Exception:
-    warnings.warn("matplotlib modules could not be loaded -- plotting and gfile"
-                  " writing will not be available.",
-                  ModuleWarning)
+
+import matplotlib.pyplot as plt
+import matplotlib.widgets as mplw
+import matplotlib.gridspec as mplgs
+import matplotlib.patches as mpatches
+import matplotlib.path as mpath
+from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+from matplotlib.colorbar import ColorbarBase
+from matplotlib.colors import Normalize
+from .filewriter import gfile
+
+    
+# try:
+#     import matplotlib.pyplot as plt
+#     import matplotlib.widgets as mplw
+#     import matplotlib.gridspec as mplgs
+#     import matplotlib.patches as mpatches
+#     import matplotlib.path as mpath
+#     from mpl_toolkits.mplot3d import Axes3D
+#     from mpl_toolkits.axes_grid1 import make_axes_locatable
+#     from matplotlib.colorbar import ColorbarBase
+#     from matplotlib.colors import Normalize
+#     from filewriter import gfile
+#     #from .filewriter import gfile   #not working in Python3
+# except Exception:
+#     warnings.warn("matplotlib modules could not be loaded -- plotting and gfile"
+#                   " writing will not be available.",
+#                   ModuleWarning)
 
 
 class PropertyAccessMixin(object):
@@ -140,47 +161,47 @@ _length_conversion = {'m': {'m': 1.0,
                             'cm': 100.0,
                             'mm': 1000.0,
                             'in': 39.37,
-                            'ft': 39.37 / 12.0,
-                            'yd': 39.37 / (12.0 * 3.0),
-                            'smoot': 39.37 / 67.0,
-                            'cubit': 39.37 / 18.0,
-                            'hand': 39.37 / 4.0},
+                            'ft': old_div(39.37, 12.0),
+                            'yd': old_div(39.37, (12.0 * 3.0)),
+                            'smoot': old_div(39.37, 67.0),
+                            'cubit': old_div(39.37, 18.0),
+                            'hand': old_div(39.37, 4.0)},
                       'cm': {'m': 0.01,
                              'cm': 1.0,
                              'mm': 10.0,
-                             'in': 39.37 / 100.0,
-                             'ft': 39.37 / (100.0 * 12.0),
-                             'yd': 39.37 / (100.0 * 12.0 * 3.0),
-                             'smoot': 39.37 / (100.0 * 67.0),
-                             'cubit': 39.37 / (100.0 * 18.0),
-                             'hand': 39.37 / (100.0 * 4.0)},
+                             'in': old_div(39.37, 100.0),
+                             'ft': old_div(39.37, (100.0 * 12.0)),
+                             'yd': old_div(39.37, (100.0 * 12.0 * 3.0)),
+                             'smoot': old_div(39.37, (100.0 * 67.0)),
+                             'cubit': old_div(39.37, (100.0 * 18.0)),
+                             'hand': old_div(39.37, (100.0 * 4.0))},
                       'mm': {'m': 0.001,
                              'cm': 0.1,
                              'mm': 1.0,
-                             'in': 39.37 / 1000.0,
-                             'ft': 39.37 / (1000.0 * 12.0),
-                             'yd': 39.37 / (1000.0 * 12.0 * 3.0),
-                             'smoot': 39.37 / (1000.0 * 67.0),
-                             'cubit': 39.37 / (1000.0 * 18.0),
-                             'hand': 39.37 / (1000.0 * 4.0)},
-                      'in': {'m': 1.0 / 39.37,
-                             'cm': 100.0 / 39.37,
-                             'mm': 1000.0 / 39.37,
+                             'in': old_div(39.37, 1000.0),
+                             'ft': old_div(39.37, (1000.0 * 12.0)),
+                             'yd': old_div(39.37, (1000.0 * 12.0 * 3.0)),
+                             'smoot': old_div(39.37, (1000.0 * 67.0)),
+                             'cubit': old_div(39.37, (1000.0 * 18.0)),
+                             'hand': old_div(39.37, (1000.0 * 4.0))},
+                      'in': {'m': old_div(1.0, 39.37),
+                             'cm': old_div(100.0, 39.37),
+                             'mm': old_div(1000.0, 39.37),
                              'in': 1.0,
-                             'ft': 1.0 / 12.0,
-                             'yd': 1.0 / (12.0 * 3.0),
-                             'smoot': 1.0 / 67.0,
-                             'cubit': 1.0 / 18.0,
-                             'hand': 1.0 / 4.0},
-                      'ft': {'m': 12.0 / 39.37,
+                             'ft': old_div(1.0, 12.0),
+                             'yd': old_div(1.0, (12.0 * 3.0)),
+                             'smoot': old_div(1.0, 67.0),
+                             'cubit': old_div(1.0, 18.0),
+                             'hand': old_div(1.0, 4.0)},
+                      'ft': {'m': old_div(12.0, 39.37),
                              'cm': 12.0 * 100.0 / 39.37,
                              'mm': 12.0 * 1000.0 / 39.37,
                              'in': 12.0,
                              'ft': 1.0,
-                             'yd': 1.0 / 3.0,
-                             'smoot': 12.0 / 67.0,
-                             'cubit': 12.0 / 18.0,
-                             'hand': 12.0 / 4.0},
+                             'yd': old_div(1.0, 3.0),
+                             'smoot': old_div(12.0, 67.0),
+                             'cubit': old_div(12.0, 18.0),
+                             'hand': old_div(12.0, 4.0)},
                       'yd': {'m': 3.0 * 12.0 / 39.37,
                              'cm': 3.0 * 12.0 * 100.0 / 39.37,
                              'mm': 3.0 * 12.0 * 1000.0 / 39.37,
@@ -190,32 +211,32 @@ _length_conversion = {'m': {'m': 1.0,
                              'smoot': 3.0 * 12.0 / 67.0,
                              'cubit': 3.0 * 12.0 / 18.0,
                              'hand': 3.0 * 12.0 / 4.0},
-                      'smoot': {'m': 67.0 / 39.37,
+                      'smoot': {'m': old_div(67.0, 39.37),
                                 'cm': 67.0 * 100.0 / 39.37,
                                 'mm': 67.0 * 1000.0 / 39.37,
                                 'in': 67.0,
-                                'ft': 67.0 / 12.0,
-                                'yd': 67.0 / (12.0 * 3.0),
+                                'ft': old_div(67.0, 12.0),
+                                'yd': old_div(67.0, (12.0 * 3.0)),
                                 'smoot': 1.0,
-                                'cubit': 67.0 / 18.0,
-                                'hand': 67.0 / 4.0},
-                      'cubit': {'m': 18.0 / 39.37,
+                                'cubit': old_div(67.0, 18.0),
+                                'hand': old_div(67.0, 4.0)},
+                      'cubit': {'m': old_div(18.0, 39.37),
                                 'cm': 18.0 * 100.0 / 39.37,
                                 'mm': 18.0 * 1000.0 / 39.37,
                                 'in': 18.0,
-                                'ft': 18.0 / 12.0,
-                                'yd': 18.0 / (12.0 * 3.0),
-                                'smoot': 18.0 / 67.0,
+                                'ft': old_div(18.0, 12.0),
+                                'yd': old_div(18.0, (12.0 * 3.0)),
+                                'smoot': old_div(18.0, 67.0),
                                 'cubit': 1.0,
-                                'hand': 18.0 / 4.0},
-                      'hand': {'m': 4.0 / 39.37,
+                                'hand': old_div(18.0, 4.0)},
+                      'hand': {'m': old_div(4.0, 39.37),
                                'cm': 4.0 * 100.0 / 39.37,
                                'mm': 4.0 * 1000.0 / 39.37,
                                'in': 4.0,
-                               'ft': 4.0 / 12.0,
-                               'yd': 4.0 / (12.0 * 3.0),
-                               'smoot': 4.0 / 67.0,
-                               'cubit': 4.0 / 18.0,
+                               'ft': old_div(4.0, 12.0),
+                               'yd': old_div(4.0, (12.0 * 3.0)),
+                               'smoot': old_div(4.0, 67.0),
+                               'cubit': old_div(4.0, 18.0),
                                'hand': 1.0}}
 
 
@@ -663,7 +684,7 @@ class Equilibrium(object):
                     out_vals = scipy.reshape(out_vals, original_shape)
             elif each_t:
                 out_vals = scipy.zeros(
-                    scipy.concatenate(([len(time_idxs),], original_shape)).astype(int)
+                    scipy.concatenate(([len(time_idxs),], original_shape))
                 )
                 for idx, t_idx in enumerate(time_idxs):
                     out_vals[idx] = self._getFluxBiSpline(t_idx).ev(Z, R).reshape(original_shape)
@@ -816,14 +837,14 @@ class Equilibrium(object):
             # arrays to be broadcastable:
             if not blob[-3]:
                 if each_t:
-                    for k in xrange(0, len(blob[-1])):
+                    for k in range(0, len(blob[-1])):
                         psi_boundary = scipy.expand_dims(psi_boundary, -1)
                         psi_0 = scipy.expand_dims(psi_0, -1)
                 else:
                     psi_boundary = psi_boundary.reshape(blob[-1])
                     psi_0 = psi_0.reshape(blob[-1])
         
-        psi_norm = (psi - psi_0) / (psi_boundary - psi_0)
+        psi_norm = old_div((psi - psi_0), (psi_boundary - psi_0))
         
         if sqrt:
             if psi_norm.ndim == 0:
@@ -1584,7 +1605,7 @@ class Equilibrium(object):
                     roa = roa.reshape(original_shape)
             elif each_t:
                 roa = scipy.zeros(
-                    scipy.concatenate(([len(time_idxs),], original_shape)).astype(int)
+                    scipy.concatenate(([len(time_idxs),], original_shape))
                 )
                 for idx, t_idx in enumerate(time_idxs):
                     roa[idx] = self._rmid2roa(R_mid, t_idx).reshape(original_shape)
@@ -2013,12 +2034,12 @@ class Equilibrium(object):
                                          "t must have only one dimension.")
                     R_mid = scipy.tile(
                         R_mid,
-                        scipy.concatenate(([len(t),], scipy.ones_like(scipy.shape(R_mid), dtype=float))) #may need to be declared as ints
+                        scipy.concatenate(([len(t),], scipy.ones_like(scipy.shape(R_mid), dtype=float)))
                     )
                     # TODO: Is there a clever way to do this without a loop?
                     Z_mid_temp = scipy.ones_like(R_mid, dtype=float)
                     t_temp = scipy.ones_like(R_mid, dtype=float)
-                    for k in xrange(0, len(Z_mid)):
+                    for k in range(0, len(Z_mid)):
                         Z_mid_temp[k] *= Z_mid[k]
                         t_temp[k] *= t[k]
                     Z_mid = Z_mid_temp
@@ -2137,7 +2158,7 @@ class Equilibrium(object):
                     R_mid = R_mid.reshape(original_shape)
             elif each_t:
                 R_mid = scipy.zeros(
-                    scipy.concatenate(([len(time_idxs),], original_shape)).astype(int)
+                    scipy.concatenate(([len(time_idxs),], original_shape))
                 )
                 for idx, t_idx in enumerate(time_idxs):
                     R_mid[idx] = self._roa2rmid(roa, t_idx).reshape(original_shape)
@@ -6657,7 +6678,7 @@ class Equilibrium(object):
                     out_vals = scipy.reshape(out_vals, original_shape)
             elif each_t:
                 out_vals = scipy.zeros(
-                    scipy.concatenate(([len(time_idxs),], original_shape)).astype(int)
+                    scipy.concatenate(([len(time_idxs),], original_shape))
                 )
                 for idx, t_idx in enumerate(time_idxs):
                     out_vals[idx] = scipy.reshape(
@@ -6801,8 +6822,9 @@ class Equilibrium(object):
         )
         
         if self._tricubic:
+            # TODO: This almost certainly isn't implemented!
             out_vals = scipy.reshape(
-                1.0 / R * self._getFluxTriSpline().ev(t, Z, R, dx=0, dy=0, dz=1),
+                1.0 / R * self._getFluxTriSpline().ev(t, Z, R, dx=1, dy=0, dz=0),
                 original_shape
             )
         else:
@@ -6814,7 +6836,7 @@ class Equilibrium(object):
                     out_vals = scipy.reshape(out_vals, original_shape)
             elif each_t:
                 out_vals = scipy.zeros(
-                    scipy.concatenate(([len(time_idxs),], original_shape)).astype(int)
+                    scipy.concatenate(([len(time_idxs),], original_shape))
                 )
                 for idx, t_idx in enumerate(time_idxs):
                     out_vals[idx] = scipy.reshape(
@@ -6957,7 +6979,7 @@ class Equilibrium(object):
         else:
             F = out
         
-        B_T = F / R
+        B_T = old_div(F, R)
         
         # This will have NaN anywhere outside of the LCFS. Only handle if we
         # we need to.
@@ -6978,7 +7000,7 @@ class Equilibrium(object):
             if self._tricubic:
                 B_T = B_T.ravel()
                 mask = scipy.isnan(B_T)
-                B_T[mask] = self.getBtVacSpline()(t[mask]) * self.getMagRSpline()(t[mask]) / R[mask]
+                B_T[mask] = self.getBtVacSpline()(t) * self.getMagRSpline()(t) / R[mask]
                 B_T = scipy.reshape(B_T, original_shape)
             else:
                 if single_time:
@@ -7664,7 +7686,7 @@ class Equilibrium(object):
         r.set_initial_value([R0, Z0], phi0)
         out = scipy.zeros((nsteps + 1, 3)) # R, Z, Phi
         out[0, :] = [R0, Z0, phi0]
-        for i in xrange(1, nsteps + 1):
+        for i in range(1, nsteps + 1):
             out[i, 0:2] = r.integrate(r.t + dphi)
             out[i, 2] = r.t
         return out
@@ -7846,7 +7868,7 @@ class Equilibrium(object):
                     c = plt.get_cmap(cmap)(
                         int(
                             scipy.around(
-                                255 * ((mag[j][i] + mag[j][i + 1]) / 2.0 - mag_min) / (mag_max - mag_min)
+                                255 * (old_div((mag[j][i] + mag[j][i + 1]), 2.0) - mag_min) / (mag_max - mag_min)
                             )
                         )
                     )[:3]
@@ -7883,12 +7905,12 @@ class Equilibrium(object):
                     v[0, 0] * scipy.cos(v[0, 2]),
                     v[0, 0] * scipy.sin(v[0, 2]),
                     v[0, 1],
-                    (uR * scipy.cos(v[0, 2]) - uT * scipy.sin(v[0, 2])) / u,
-                    (uR * scipy.sin(v[0, 2]) + uT * scipy.cos(v[0, 2])) / u,
-                    uZ / u,
+                    old_div((uR * scipy.cos(v[0, 2]) - uT * scipy.sin(v[0, 2])), u),
+                    old_div((uR * scipy.sin(v[0, 2]) + uT * scipy.cos(v[0, 2])), u),
+                    old_div(uZ, u),
                     color=c,
                     alpha=alpha,
-                    length=v_ext / 10.0,
+                    length=old_div(v_ext, 10.0),
                     arrow_length_ratio=1.0,
                     pivot='tail',
                     linewidth=arrowlinewidth
@@ -8014,7 +8036,7 @@ class Equilibrium(object):
                         quan_norm = scipy.reshape(quan_norm, original_shape)
                 elif each_t:
                     quan_norm = scipy.zeros(
-                        scipy.concatenate(([len(time_idxs),], original_shape)).astype(int)
+                        scipy.concatenate(([len(time_idxs),], original_shape))
                     )
                     for idx, t_idx in enumerate(time_idxs):
                         if convert_roa:
@@ -8084,7 +8106,7 @@ class Equilibrium(object):
                         quan_norm = scipy.reshape(quan_norm, original_shape)
                 elif each_t:
                     quan_norm = scipy.zeros(
-                        scipy.concatenate(([len(time_idxs),], original_shape)).astype(int)
+                        scipy.concatenate(([len(time_idxs),], original_shape))
                     )
                     for idx, t_idx in enumerate(time_idxs):
                         tmp = spline_func(t_idx, k=k)(psi_norm[idx].reshape(-1))
@@ -8146,7 +8168,7 @@ class Equilibrium(object):
             Rout = self.getRmidOutSpline(length_unit='m')(time_idxs)
         
         # Compute r/a according to our definition:
-        return (R_mid - magR) / (Rout - magR)
+        return old_div((R_mid - magR), (Rout - magR))
     
     def _roa2rmid(self, roa, time_idxs):
         r"""Covert the given r/a at the given time_idxs to R_mid.
@@ -8661,7 +8683,7 @@ class Equilibrium(object):
         if start is None:
             # If start is None, it means to use the instance's default unit (implied to the power of 1):
             start = self._length_unit
-        elif isinstance(start, (int, long)):
+        elif isinstance(start, (int, int)):
             # If start is an integer type, this is used as the power applied to the instance's default unit:
             if self._length_unit != 'default':
                 start = self._length_unit + '^' + str(start)
@@ -8670,7 +8692,7 @@ class Equilibrium(object):
                 start = self._length_unit
         if start == 'default':
             # If start is 'default', the thing passed to default is used, but only if it is a complete unit specification:
-            if default is None or isinstance(default, (int, long)) or default == 'default':
+            if default is None or isinstance(default, (int, int)) or default == 'default':
                 raise ValueError("You must specify a complete unit (i.e., "
                                  "non-None, non-integer and not 'default') "
                                  "when using 'default' for the starting unit.")
@@ -8678,7 +8700,7 @@ class Equilibrium(object):
                 start = default
         
         # Default unit:
-        if default is None or isinstance(default, (int, long)) or default == 'default':
+        if default is None or isinstance(default, (int, int)) or default == 'default':
             # If start is 'default', these cases have already been caught above.
             default = start
         
@@ -8686,7 +8708,7 @@ class Equilibrium(object):
         if end is None:
             # If end is None, it means to use the instance's default unit (implied to the power of 1):
             end = self._length_unit
-        elif isinstance(end, (int, long)):
+        elif isinstance(end, (int, int)):
             # If end is an integer type, this is used as the power applied to the instance's default unit:
             if self._length_unit != 'default':
                 end = self._length_unit + '^' + str(end)
@@ -8895,7 +8917,7 @@ class Equilibrium(object):
             # Check errors and warn if needed:
             t_errs = scipy.absolute(t - timebase[time_idxs])
             # Assume a constant sampling rate to save time:
-            if len(time_idxs) > 1 and (t_errs > ((timebase[1] - timebase[0]) / 3.0)).any():
+            if len(time_idxs) > 1 and (t_errs > (old_div((timebase[1] - timebase[0]), 3.0))).any():
                 warnings.warn(
                     "Some time points are off by more than 1/3 the EFIT point "
                     "spacing. Using nearest-neighbor interpolation between time "
@@ -8986,9 +9008,9 @@ class Equilibrium(object):
                 return (scipy.absolute(a - v)).argmin()
         else:
             try:
-                return scipy.digitize(v, (a[1:] + a[:-1]) / 2.0)
+                return scipy.digitize(v, old_div((a[1:] + a[:-1]), 2.0))
             except ValueError:
-                return scipy.digitize(scipy.atleast_1d(v), (a[1:] + a[:-1]) / 2.0).reshape(())
+                return scipy.digitize(scipy.atleast_1d(v), old_div((a[1:] + a[:-1]), 2.0)).reshape(())
     
     def _getFluxBiSpline(self, idx):
         """Gets the spline corresponding to the given time index, generating as needed.
@@ -9076,7 +9098,7 @@ class Equilibrium(object):
                 phi_norm_meas = scipy.insert(
                     scipy.integrate.cumtrapz(self.getQProfile()[idx], x=x), 0, 0
                 )
-                phi_norm_meas = phi_norm_meas / phi_norm_meas[-1]
+                phi_norm_meas = old_div(phi_norm_meas, phi_norm_meas[-1])
                 
                 spline = trispline.UnivariateInterpolator(
                     scipy.linspace(0.0, 1.0, len(phi_norm_meas)),
@@ -9100,7 +9122,7 @@ class Equilibrium(object):
                     scipy.integrate.cumtrapz(self.getQProfile(), axis=1),
                     0, 0, axis=1
                 )
-                phi_norm_meas = phi_norm_meas / phi_norm_meas[:, -1, scipy.newaxis]
+                phi_norm_meas = old_div(phi_norm_meas, phi_norm_meas[:, -1, scipy.newaxis])
                 self._phiNormSpline = trispline.RectBivariateSpline(
                     self.getTimeBase(),
                     scipy.linspace(0, 1, len(phi_norm_meas[0, :])),
@@ -9146,7 +9168,7 @@ class Equilibrium(object):
                     scipy.integrate.cumtrapz(self.getQProfile()[idx], x=x),
                     0, 0
                 )
-                phi_norm_meas = phi_norm_meas / phi_norm_meas[-1]
+                phi_norm_meas = old_div(phi_norm_meas, phi_norm_meas[-1])
                 
                 spline = trispline.UnivariateInterpolator(
                     phi_norm_meas,
@@ -9172,7 +9194,7 @@ class Equilibrium(object):
                     0,
                     axis=1
                 )
-                phi_norm_meas = phi_norm_meas / phi_norm_meas[:, -1, scipy.newaxis]
+                phi_norm_meas = old_div(phi_norm_meas, phi_norm_meas[:, -1, scipy.newaxis])
                 psinorm_grid, t_grid = scipy.meshgrid(
                     scipy.linspace(0, 1, phi_norm_meas.shape[1]),
                     self.getTimeBase()
@@ -9210,7 +9232,7 @@ class Equilibrium(object):
                 return self._volNormSpline[idx][k]
             except KeyError:
                 vol_norm_meas = self.getFluxVol()[idx]
-                vol_norm_meas = vol_norm_meas / vol_norm_meas[-1]
+                vol_norm_meas = old_div(vol_norm_meas, vol_norm_meas[-1])
                 
                 spline = trispline.UnivariateInterpolator(
                     scipy.linspace(0, 1, len(vol_norm_meas)),
@@ -9228,7 +9250,7 @@ class Equilibrium(object):
                 return self._volNormSpline
             else:
                 vol_norm_meas = self.getFluxVol()
-                vol_norm_meas = vol_norm_meas / vol_norm_meas[:, -1, scipy.newaxis]
+                vol_norm_meas = old_div(vol_norm_meas, vol_norm_meas[:, -1, scipy.newaxis])
                 self._volNormSpline = trispline.RectBivariateSpline(
                     self.getTimeBase(),
                     scipy.linspace(0, 1, len(vol_norm_meas[0, :])),
@@ -9264,7 +9286,7 @@ class Equilibrium(object):
                 return self._volNormToPsiNormSpline[idx][k]
             except KeyError:
                 vol_norm_meas = self.getFluxVol()[idx]
-                vol_norm_meas = vol_norm_meas / vol_norm_meas[-1]
+                vol_norm_meas = old_div(vol_norm_meas, vol_norm_meas[-1])
                 
                 spline = trispline.UnivariateInterpolator(
                     vol_norm_meas,
@@ -9282,7 +9304,7 @@ class Equilibrium(object):
                 return self._volNormToPsiNormSpline
             else:
                 vol_norm_meas = self.getFluxVol()
-                vol_norm_meas = vol_norm_meas / vol_norm_meas[:, -1, scipy.newaxis]
+                vol_norm_meas = old_div(vol_norm_meas, vol_norm_meas[:, -1, scipy.newaxis])
                 
                 psinorm_grid, t_grid = scipy.meshgrid(
                     scipy.linspace(0, 1, len(vol_norm_meas[0, :])),
@@ -9629,7 +9651,7 @@ class Equilibrium(object):
                 return self._FToPsinormSpline[idx][k]
             except KeyError:
                 F = self.getF()[idx]
-                F = (F - F.min()) / (F.max() - F.min())
+                F = old_div((F - F.min()), (F.max() - F.min()))
                 psinorm_grid = scipy.linspace(0.0, 1.0, len(F))
                 # Find if it ever goes non-monotonic: F hacked to be
                 # strictly INCREASING from the magnetic axis out.
@@ -9658,7 +9680,7 @@ class Equilibrium(object):
                 return self._FToPsinormSpline
             else:
                 F = self.getF()
-                F = (F - F.min(axis=1)[:, None]) / (F.max(axis=1) - F.min(axis=1))[:, None]
+                F = old_div((F - F.min(axis=1)[:, None]), (F.max(axis=1) - F.min(axis=1))[:, None])
                 self._FToPsinormSpline = trispline.RectBivariateSpline(
                     self.getTimeBase(),
                     F,

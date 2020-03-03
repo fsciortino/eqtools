@@ -26,6 +26,11 @@ Classes:
         data from ASCII p-file, storing as copy-safe object 
         attributes.
 """
+from __future__ import print_function
+from builtins import str
+from builtins import next
+from builtins import range
+from builtins import object
 
 import numpy as np
 import csv

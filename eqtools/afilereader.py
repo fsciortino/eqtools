@@ -26,6 +26,11 @@ Classes:
         data from ASCII a-file, storing as copy-safe object
         attributes.
 """
+from __future__ import division
+from builtins import next
+from builtins import range
+from builtins import object
+from past.utils import old_div
 
 import numpy as np
 import re
@@ -141,7 +146,7 @@ class AFileReader(object):
             self._vertn = float(line[3])    # decay index at current centroid
 
             # read next mco2v values for rco2v, dco2v
-            nrows = self._mco2v/4
+            nrows = old_div(self._mco2v,4)
             if self._mco2v % 4 != 0:
                 nrows += 1
 
@@ -162,7 +167,7 @@ class AFileReader(object):
             self._dco2v = np.array(self._dco2v)     # line-averaged density along vertical CO2 chords
 
             # read next mco2r values for rco2r, dco2r
-            nrows = self._mco2r/4
+            nrows = old_div(self._mco2r,4)
             if self._mco2r % 4 != 0:
                 nrows += 1
 
@@ -262,7 +267,7 @@ class AFileReader(object):
             self._betapd = float(line[0])           # diamagnetic-loop poloidal beta
             self._betatd = float(line[1])           # diamagnetic-loop toroidal beta
             self._wplasmd = float(line[2])          # diamagnetic-loop stored energy
-            self._diamag = float(line[3])/1.e3      # diamagnetic flux
+            self._diamag = old_div(float(line[3]),1.e3)      # diamagnetic flux
 
             # read vloopt, taudia, cmerci, tavem
             line = next(reader)[0]
@@ -282,7 +287,7 @@ class AFileReader(object):
             # read csilop, cmpr2
             # for god knows what reason, these are written as a single nsilop+magpri block.
             npts = nsilop+magpri
-            nrows = npts/4
+            nrows = old_div(npts,4)
             if npts % 4 != 0:
                 nrows += 1
 
@@ -296,7 +301,7 @@ class AFileReader(object):
             self._cmpr2 = np.array(dat[nsilop+1:])      # calculated Bpol coil signals
 
             # read ccbrsp
-            nrows = nfcoil/4
+            nrows = old_div(nfcoil,4)
             if nfcoil % 4 != 0:
                 nrows += 1
 
@@ -309,7 +314,7 @@ class AFileReader(object):
             self._ccbrsp = np.array(self._ccbrsp)       # calculated F-coil currents
 
             # read eccurt
-            nrows = nesum/4
+            nrows = old_div(nesum,4)
             if nesum % 4 != 0:
                 nrows += 1
 

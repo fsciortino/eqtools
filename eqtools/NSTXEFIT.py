@@ -19,6 +19,8 @@
 """This module provides classes inheriting :py:class:`eqtools.EFIT.EFITTree` for 
 working with NSTX EFIT data.
 """
+from __future__ import print_function
+from builtins import str
 
 import scipy
 

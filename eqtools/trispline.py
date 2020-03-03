@@ -20,18 +20,20 @@
 """ This module provides interface to the tricubic spline interpolator. It also
 contains an enhanced bivariate spline which generates bounds errors.
 """
+from __future__ import absolute_import
+from builtins import object
 
 
 import scipy 
 import scipy.interpolate
 try:
-    import _tricub
+    from . import _tricub
 except:
     # Won't be able to use actual trispline, but still can use other routines.
     pass
 
 
-class Spline():
+class Spline(object):
     """Tricubic interpolating spline with forced edge derivative equal zero
     conditions.  It assumes a cartesian grid.  The ordering of f[z,y,x] is
     extremely important for the proper evaluation of the spline.  It assumes
@@ -74,11 +76,11 @@ class Spline():
     
     """
     def __init__(self, x, y, z, f, boundary = 'natural', dx=0, dy=0, dz=0, bounds_error=True, fill_value=scipy.nan):
-        #if dx != 0 or dy != 0 or dz != 0:
-        #    raise NotImplementedError(
-        #        "Trispline derivatives are not implemented, do not use tricubic "
-        #        "interpolation if you need to compute magnetic fields!"
-        #    )
+        if dx != 0 or dy != 0 or dz != 0:
+            raise NotImplementedError(
+                "Trispline derivatives are not implemented, do not use tricubic "
+                "interpolation if you need to compute magnetic fields!"
+            )
 
         
         self._x = scipy.array(x,dtype=float)
@@ -88,11 +90,6 @@ class Spline():
         self._xlim = scipy.array((x.min(), x.max()))
         self._ylim = scipy.array((y.min(), y.max()))
         self._zlim = scipy.array((z.min(), z.max()))
-
-        self._dx = scipy.array(dx, dtype=int)
-        self._dy = scipy.array(dy, dtype=int)
-        self._dz = scipy.array(dz, dtype=int)
-        
         self.bounds_error = bounds_error
         self.fill_value = fill_value
 
@@ -187,7 +184,7 @@ class Spline():
 
 
             
-    def ev(self, xi, yi, zi, dx=0, dy=0, dz=0):
+    def ev(self, xi, yi, zi):
         """evaluates tricubic spline at point (xi,yi,zi) which is f[xi,yi,zi].
 
         Args:
@@ -213,27 +210,11 @@ class Spline():
         val = self.fill_value*scipy.ones(x.shape)
         idx = self._check_bounds(x, y, z)
 
-        if dx == 0:
-            dx = self._dx
-
-        if dy == 0:
-            dy = self._dy
-
-        if dz == 0:
-            dz = self._dz
-        
         if z[idx].size != 0:
             if self._regular:
-                if dx or dy or dz:
-                    val[idx] = _tricub.reg_ev_full(z[idx], y[idx], x[idx], self._f, self._z, self._y, self._x, dz, dy, dx) 
-                else:
-                    val[idx] = _tricub.reg_ev(z[idx], y[idx], x[idx], self._f, self._z, self._y, self._x)  
-
+                val[idx] = _tricub.reg_ev(z[idx], y[idx], x[idx], self._f, self._z, self._y, self._x)  
             else:
-                if dx or dy or dz:
-                    val[idx] = _tricub.nonreg_ev_full(z[idx], y[idx], x[idx], self._f, self._z, self._y, self._x, dz, dy, dx)
-                else:
-                    val[idx] = _tricub.nonreg_ev(z[idx], y[idx], x[idx], self._f, self._z, self._y, self._x)
+                val[idx] = _tricub.nonreg_ev(z[idx], y[idx], x[idx], self._f, self._z, self._y, self._x)
 
         return val
 

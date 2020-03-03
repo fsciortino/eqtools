@@ -19,6 +19,8 @@
 """This module provides classes inheriting :py:class:`eqtools.EFIT.EFITTree` for 
 working with C-Mod EFIT data.
 """
+from builtins import str
+from builtins import range
 
 import scipy
 

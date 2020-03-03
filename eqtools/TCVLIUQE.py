@@ -19,6 +19,12 @@
 """This module provides classes inheriting :py:class:`eqtools.EFIT.EFITTree` for 
 working with TCV LIUQE Equilibrium.
 """
+from __future__ import print_function
+from __future__ import division
+from builtins import zip
+from builtins import str
+from builtins import range
+from past.utils import old_div
 
 import scipy
 from collections import namedtuple
@@ -50,7 +56,7 @@ try:
     from matplotlib.path import Path
     from matplotlib.patches import PathPatch
     from matplotlib.ticker import MaxNLocator
-    import matplotlib._cntr as cntr
+    #import matplotlib._cntr as cntr #FS commented out
 
 except Exception:
     warnings.warn("matplotlib modules could not be loaded -- plotting and gfile"
@@ -158,7 +164,7 @@ class TCVLIUQETree(EFITTree):
             nz = len(self._zGrid)
         except TypeError:
             nt, nr, nz = 0, 0, 0
-            print 'tree has failed data load.'
+            print('tree has failed data load.')
 
         data = namedtuple('Info',['shot','tree','nr','nz','nt'])
         return data(shot=self._shot,tree=self._tree,nr=nr,nz=nz,nt=nt)
@@ -195,7 +201,7 @@ class TCVLIUQETree(EFITTree):
         if self._psiRZ is None:
             try:
                 psinode = self._MDSTree.getNode(self._root+'::psi')
-                self._psiRZ = psinode.data() / (2.*scipy.pi)
+                self._psiRZ = old_div(psinode.data(), (2.*scipy.pi))
                 self._rGrid = psinode.dim_of(0).data()
                 self._zGrid = psinode.dim_of(1).data()
                 self._defaultUnits['_psiRZ'] = str(psinode.units)
@@ -255,7 +261,7 @@ class TCVLIUQETree(EFITTree):
         if self._psiAxis is None:
             try:
                 psiAxisNode = self._MDSTree.getNode(self._root+'::psi_axis')
-                self._psiAxis =  psiAxisNode.data() / (2.*scipy.pi)
+                self._psiAxis =  old_div(psiAxisNode.data(), (2.*scipy.pi))
                 self._defaultUnits['_psiAxis'] = str(psiAxisNode.units)
             except:
                 raise ValueError('data retrieval failed.')
@@ -310,7 +316,7 @@ class TCVLIUQETree(EFITTree):
                 # the rGrid, zGrid in an appropriate mesh
                 R, Z = scipy.meshgrid(self.getRGrid(), self.getZGrid())
                 # read the LCFS Volume and Area and compute the appropriate twopi R
-                rUsed = self.getVolLCFS() / self.getAreaLCFS()
+                rUsed = old_div(self.getVolLCFS(), self.getAreaLCFS())
                 # define the output
                 volumes = scipy.zeros((psiRZ.shape[0], nPsi))
                 outArea = scipy.zeros(nPsi)
@@ -696,7 +702,7 @@ class TCVLIUQETree(EFITTree):
             try:
                 # this variable is not saved in the pulse file.
                 # we compute this by adding the Major radius of the machine to the computed AOut()
-                RMaj = 0.88/0.996 # almost 0.88
+                RMaj = old_div(0.88,0.996) # almost 0.88
                 self._RmidLCFS = self.getAOut()+RMaj
                 # The units aren't properly stored in the tree for this one!
                 # Should be meters.
@@ -797,11 +803,11 @@ class TCVLIUQETree(EFITTree):
             try:
                 # constant is due to a detailed measurements on the vacuum vessel major radius
                 # introduce to be consistent with TDI function tcv_eq.fun
-                RMaj = 0.88/0.996 # almost 0.88 m
+                RMaj = old_div(0.88,0.996) # almost 0.88 m
                 # open a connection
                 conn = MDSplus.Connection('tcvdata.epfl.ch')
                 conn.openTree('tcv_shot', self._shot)
-                bt = conn.get('tcv_eq("BZERO")').data()[0]/RMaj
+                bt = old_div(conn.get('tcv_eq("BZERO")').data()[0],RMaj)
                 btTime = conn.get('dim_of(tcv_eq("BZERO"))').data()
                 conn.closeTree(self._tree, self._shot)
                 # we need to interpolate on the time basis of LIUQE

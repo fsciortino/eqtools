@@ -24,6 +24,12 @@ Classes:
         Class inheriting Equilibrium reading g- and a-files for
         equilibrium data.
 """
+from __future__ import print_function
+from __future__ import division
+from builtins import next
+from builtins import str
+from builtins import range
+from past.utils import old_div
 
 import scipy
 import glob
@@ -226,12 +232,12 @@ class EqdskReader(Equilibrium):
             nw = int(line[-2])                              # width of flux grid (dim(R))
             nh = int(line[-1])                              # height of flux grid (dim(Z))
 
-            print(nw,nh)
+            print((nw,nh))
             #extract time, units from timestring
             try:
                 time = re.findall('\d+',timestring)[0]
                 tunits = timestring.split(time)[1]
-                timeConvertDict = {'ms':1./1000.,'s':1.}
+                timeConvertDict = {'ms':old_div(1.,1000.),'s':1.}
                 self._time = scipy.array([float(time)*timeConvertDict[tunits]]) # returns time in seconds as array
     
             except KeyError:
@@ -255,7 +261,7 @@ class EqdskReader(Equilibrium):
 
             # construct EFIT grid
             self._rGrid = scipy.linspace(rgrid0,rgrid0 + xdim,nw)
-            self._zGrid = scipy.linspace(zmid - zdim/2.0,zmid + zdim/2.0,nh)
+            self._zGrid = scipy.linspace(zmid - old_div(zdim,2.0),zmid + old_div(zdim,2.0),nh)
             #drefit = (self._rGrid[-1] - self._rGrid[0])/(nw-1)
             #dzefit = (self._zGrid[-1] - self._zGrid[0])/(nh-1)
             self._defaultUnits['_rGrid'] = 'm'
@@ -286,7 +292,7 @@ class EqdskReader(Equilibrium):
             # don't actually need anything from this line
 
             # start reading fpol, next nw inputs
-            nrows = nw/5
+            nrows = old_div(nw,5)
             if nw % 5 != 0:     # catch truncated rows
                 nrows += 1
 
@@ -333,7 +339,7 @@ class EqdskReader(Equilibrium):
             # start by reading nw x nh points into 1D array,
             # then repack in column order into final array
             npts = nw*nh
-            nrows = npts/5
+            nrows = old_div(npts,5)
             if npts % 5 != 0:
                 nrows += 1
 
@@ -347,7 +353,7 @@ class EqdskReader(Equilibrium):
             self._defaultUnits['_psiRZ'] = 'Wb/rad'
 
             # read q(psi) profile, nw points (same basis as fpol, pres, etc.)
-            nrows = nw/5
+            nrows = old_div(nw,5)
             if nw % 5 != 0:
                 nrows += 1
 
@@ -367,7 +373,7 @@ class EqdskReader(Equilibrium):
             # next data reads as 2 x nbbbs array, then broken into
             # rbbbs, zbbbs (R,Z locations of LCFS)
             npts = 2*nbbbs
-            nrows = npts/5
+            nrows = old_div(npts,5)
             if npts % 5 != 0:
                 nrows += 1
             bbbs = []
@@ -385,7 +391,7 @@ class EqdskReader(Equilibrium):
             # next data reads as 2 x limitr array, then broken into
             # xlim, ylim (locations of limiter)(?)
             npts = 2*limitr
-            nrows = npts/5
+            nrows = old_div(npts,5)
             if npts % 5 != 0:
                 nrows += 1
             lim = []
@@ -410,7 +416,7 @@ class EqdskReader(Equilibrium):
 
                 # read kvtor data if present
                 if kvtor > 0:
-                    nrows = nw/5
+                    nrows = old_div(nw,5)
                     if nw % 5 != 0:
                         nrows += 1
                     self._presw = []
@@ -433,7 +439,7 @@ class EqdskReader(Equilibrium):
 
                 # read ion mass density if present
                 if nmass > 0:
-                    nrows = nw/5
+                    nrows = old_div(nw,5)
                     if nw % 5 != 0:
                         nrows += 1
                     self._dmion = []
@@ -447,7 +453,7 @@ class EqdskReader(Equilibrium):
                     self._dmion = scipy.atleast_2d(scipy.array([0]))
 
                 # read rhovn
-                nrows = nw/5
+                nrows = old_div(nw,5)
                 if nw % 5 != 0:
                     nrows += 1
                 self._rhovn = []
@@ -611,7 +617,7 @@ class EqdskReader(Equilibrium):
         except TypeError:
             nr,nz,shot,time=0
             efittype=None
-            print 'failed to load data from g-file.'
+            print('failed to load data from g-file.')
         return data(shot=shot,time=time,nr=nr,nz=nz,efittype=efittype)
 
     def readAFile(self,afile):

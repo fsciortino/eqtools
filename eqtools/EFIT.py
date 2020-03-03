@@ -19,6 +19,9 @@
 """Provides class inheriting :py:class:`eqtools.core.Equilibrium` for working 
 with EFIT data.
 """
+from __future__ import print_function
+from builtins import str
+from builtins import range
 
 import scipy
 from collections import namedtuple
@@ -279,7 +282,7 @@ class EFITTree(Equilibrium):
             nz = len(self._zGrid)
         except TypeError:
             nt, nr, nz = 0, 0, 0
-            print 'tree has failed data load.'
+            print('tree has failed data load.')
 
         data = namedtuple('Info',['shot','tree','nr','nz','nt'])
         return data(shot=self._shot,tree=self._tree,nr=nr,nz=nz,nt=nt)
@@ -315,6 +318,9 @@ class EFITTree(Equilibrium):
         Raises:
             ValueError: if module cannot retrieve data from MDS tree.
         """
+        #import pdb
+        #pdb.set_trace()
+
         if self._psiRZ is None:
             try:
                 psinode = self._MDSTree.getNode(self._root+self._gfile+':psirz')

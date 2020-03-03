@@ -1,3 +1,9 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import division
+from builtins import str
+from builtins import range
+from past.utils import old_div
 # This program is distributed under the terms of the GNU General Purpose License (GPL).
 # Refer to http://www.gnu.org/licenses/gpl.txt
 #
@@ -20,10 +26,10 @@ import scipy
 import scipy.interpolate
 import warnings
 import time
-import core
+#import core
 import matplotlib.pyplot as plt
 try:
-    import trispline
+    from . import trispline
     _has_trispline = True
 except ImportError:
     warnings.warn("trispline module could not be loaded -- tricubic spline "
@@ -117,7 +123,7 @@ def gfile(obj, tin, nw=None, nh=None, shot=None, name=None, tunit = 'ms', title=
                        obj.getZGrid()[-1]-obj.getZGrid()[0],
                        obj.getRCentr(),
                        obj.getRGrid()[0],
-                       obj.getZGrid()[-1]/2.+obj.getZGrid()[0]/2.]))
+                       old_div(obj.getZGrid()[-1],2.)+old_div(obj.getZGrid()[0],2.)]))
 
     rcent = obj.getMagRSpline()(tin)
     zcent = obj.getMagZSpline()(tin)
@@ -262,7 +268,7 @@ def _findLCFS(rgrid, zgrid, psiRZ, rcent, zcent, psiLCFS, nbbbs=100):
         temp = scipy.diff(thetvals)
         idx = 0
         sign = scipy.sign(temp[0])
-        for j in xrange(len(temp)-1):
+        for j in range(len(temp)-1):
             
             if (scipy.sign(temp[j+1]) != sign): 
                 sign = scipy.sign(temp[j+1])
@@ -293,7 +299,7 @@ def _findLCFS(rgrid, zgrid, psiRZ, rcent, zcent, psiLCFS, nbbbs=100):
     # an infite value, which is then tossed out.
     outr = scipy.empty((nbbbs,))
 
-    for i in xrange(nbbbs):
+    for i in range(nbbbs):
         temp = scipy.inf
         for j in splines:
             pos = j(ang[i])
