@@ -6,6 +6,8 @@ Introduction
 
 Python tools for magnetic equilibria in tokamak plasmas.  Provides framework for portable, modular tools for manipulation of magnetic equilibria in tokamak plasmas, including mapping of flux surfaces into a variety of coordinate systems.  Includes tools for handling EFIT data stored in Alcator C-Mod MDSPlus trees, as well as eqdsk files.
 
+The latest update in this fork should be compatible with both Python 2.7 and Python 3+. 
+
 Full documentation is available at http://eqtools.readthedocs.org/
 
 Package Dependencies
@@ -26,11 +28,11 @@ All of these should be available via pip (and should be installed automatically 
 Installation
 ------------
 
-The easiest way to install the latest release version is with pip:
+The easiest way to install the latest release version (not updated for Python 3+) is with pip:
     
     pip install eqtools
 
-To install from source, uncompress the source files and, from the directory containing `setup.py`, run the following command:
+To install from source (recommended to get Python 3+ compatibility), uncompress the source files and, from the directory containing `setup.py`, run the following command:
     
     python setup.py install
 
